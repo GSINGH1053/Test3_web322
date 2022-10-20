@@ -67,6 +67,18 @@ exports.highGPA = ()=>{
 
         }
 
+        exports.allstudents = ()=>{
+
+            return new Promise((resolve, reject)=>{
+        
+               let results = students.filter(student => student.program == "CPA");
+        
+               (results.length == 0)? reject("all students."):resolve(results);
+        
+            });
+        
+        }
+
         (highStudent) ? resolve(highStudent): reject("Failed finding student with highest GPA");
 
     });
