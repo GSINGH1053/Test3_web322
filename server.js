@@ -1,37 +1,100 @@
 /*link to cyclic-https://bright-leg-warmers-worm.cyclic.app/ */
 
-var path = require("path");
 var express = require("express");
+
 var app = express();
+
+var data_prep = require("./data_prep_copy.js");
+
+
+
 var HTTP_PORT = process.env.PORT || 8080;
- var data=require("./data_prep");
- app.use(express.static('public'));
- app.get("/", function(req,res){
-     res.send("<h2>Declaration</h2>"+
-     "<p>The rest text is diplayed in the paragraph as shown in the screenshot.<br> I acknowledge the College's academic integrity policy - and my own integrity - remain in effect whether my work is done remotely or onsite. Any test or assingnment is in act of trust between me and my instructor, and specially with my classmates... even when no one is watching. I Declare I will not break that trust.<br/>Name: Damanjot Singh<br />Student Number: 148285216<br /><a href='/cpa'>Click to visit CPA Students.</a><br><a href='/cpa'>Click to see who has the highest GPA.</a></p>");
- });
-function onHttpStart() {
-  console.log("Express http server listening on: " + HTTP_PORT);
+
+function onHttpStart() 
+
+{
+
+    console.log("Express http server listening on " + HTTP_PORT);
+
 }
-app.use(express.static('public'));
-app.get("/", function(req,res){
-    res.sendFile(path.join(__dirname,"/views/home.html"));
-});
-app.get("/CPA", function(req,res){
-    data.cpa().then(function(data){
-        res.json(data);
-    }).catch(function(err){
-       res.json({message: err});
-    });
+
+app.get("/",(req,res)=>{
+
+    let resText = "<h2>Declaration (text size in heading 2): </h2> ";
+    resText += "<p> The rest text is displayed in paragraph as shown in screenshot. </p>";
+    resText += " <p> I acknowledge the College’s academic integrity policy – and my own integrity ";
+    resText += "– remain in effect whether my work is done remotely or onsite.";
+    resText += " Any test or assignment is an act of trust between me and my instructor, ";
+    resText += " and especially with my classmates… even when no one is watching.";
+    resText += " I declare I will not break that trust. </p>";
+    resText += "<p>Name: <mark> <b> GURTARNJIT SINGH </b> </mark> </p>";
+    resText += "<p>Student Number: <mark><b> 156805210</b> </mark> </p>"; 
+
+    resText += `<p> <a href = "/CPA"> Click to visit CPA Students </a></p>
+              <p> <a href = "/highGPA"> Click to see who has the highest GPA </a></p>`
+
+    res.send(resText);
+
 });
 
-app.get("/highGPA", function(req,res){
-    data.highGPA().then(function(data){
+
+
+app.get("/CPA", (req,res)=>{
+
+    data_prep.cpa().then((data)=>{
+
         res.json(data);
-    }).catch(function(err){
-       res.json({message: err});
+
+    }).catch((reason)=>{
+
+        res.json({message:reason});
+
     });
+
 });
-app.get('*', function(req, res){
-    res.send('Error 404: page not found', 404);
-  });
+
+
+
+app.get("/highGPA", (req, res)=>{
+
+    data_prep.highGPA().then((data)=>{
+
+        let resText = `<h2> Highest GPA: </h2>
+
+        <p> Student ID: ${data.studId} </p>
+
+        <p> Name:  ${data.name} </p>
+
+        <p> Program: ${data.program} </p>
+
+        <p> GPA: ${data.gpa} </p> `;
+
+        res.send(resText);
+
+    });
+
+});
+
+
+
+
+
+app.get("*", (req, res)=>{
+
+    res.status(404).send("Error 404: page not found.")
+
+})
+
+
+
+data_prep.prep().then((data)=>{
+
+    //console.log(data);
+
+    app.listen(HTTP_PORT, onHttpStart);
+
+}).catch((err)=>{
+
+    console.log(err);
+
+});
