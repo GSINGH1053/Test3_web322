@@ -7,8 +7,6 @@ var on_http = function(){
     console.log("Server is listening on port: " + HTTP_PORT);
 }
  
-
-//localhost:8080/images/dog.png
 app.use(express.static(_dirname + "/data_prep.js"));
 
 /*  http://localhost:8080 */
