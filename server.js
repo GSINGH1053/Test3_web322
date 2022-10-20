@@ -86,7 +86,6 @@ app.get("*", (req, res)=>{
 })
 
 
-
 data_prep.prep().then((data)=>{
 
     //console.log(data);
